@@ -64,3 +64,6 @@ function closerToCentipede() {
 }
 closerToCentipede();
 
+let weaponSelected =
+
+const enemyWeakness = (weaponSelected)
