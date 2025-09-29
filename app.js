@@ -97,11 +97,17 @@ function fight(enemy) {
     }
     if (enemyHealth <= 0) {
       console.log(`Congratulations! You defeated the ${enemy.name}!`);
-      playerLevel++;
-      console.log(`You grew to level ${playerLevel}!`);
+      if (playerLevel < 5) {
+        playerLevel++;
+        playerMaxHealth += 2.5;
+        playerHealth += 2.5;
+        console.log(`You grew to level ${playerLevel}!`);
+      }else {
+        console.log("You are already at the maximum level!");
+      }
 
       playerMaxHealth += 2.5;
-      playerHealth = playerMaxHealth;
+      playerHealth += 2.5;
       console.log(`Your maximum health has increased to ${playerMaxHealth}!`);
       return true;
     }
@@ -128,17 +134,26 @@ const weaponPreference = prompt('What weapon would you like to start with?  | Sw
 console.log(`Great you have selected ${weaponPreference}, truly a great pick!`);
 console.log(" ");
 console.log(`Tip: Going back to town heals you and if you die you return to town`);
-const firstChoice = prompt(`Do you want to complete some training, travel to town, or head to that ominous cave? `);
 console.log(` `);
-if (firstChoice === "complete some training") {
-    console.log('Good idea, that will help with fighting the enemies later.');
-    playerLocation = 'training'; // Set location for the loop
-} else if (firstChoice === "travel to town") {
-    console.log('Lets go see what they have in town.');
-    playerLocation = 'town'; // Set location for the loop
-} else { // Assumes any other answer is going to the cave
-    console.log('Now why would you do that... lets do it then.');
-    playerLocation = 'cave'; // Set location for the loop
+while (true) {
+    const firstChoice = prompt('Do you want to [complete some training], [travel to town], or [head to that ominous cave]? ');
+
+    if (firstChoice === "complete some training") {
+        console.log('Good idea, that will help with fighting the enemies later.');
+        playerLocation = 'training';
+        break; // Exit the loop on valid input
+    } else if (firstChoice === "travel to town") {
+        console.log('Lets go see what they have in town.');
+        playerLocation = 'town';
+        break; // Exit the loop on valid input
+    } else if (firstChoice === "head to that ominous cave") {
+        console.log('Now why would you do that... lets do it then.');
+        playerLocation = 'cave';
+        break; // Exit the loop on valid input
+    } else {
+        // This runs if the input is none of the above.
+        console.log("Invalid choice. Please type one of the options exactly as shown.");
+    }
 }
 
 while (true) {
