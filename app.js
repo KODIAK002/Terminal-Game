@@ -18,7 +18,7 @@ let hasTrained = false;
 let currentEnemyIndex = 0;
 
 
-const enemies = [ // Use Array since the order of how they will be fough will matter
+const enemies = [ // Use Array since the order of how they will be fought will matter
   { name: "Bat", health: 2, damage: 2, weakness: "Bow" },
   { name: "Snake", health: 5, damage: 4, weakness: "Sword" },
   { name: "Bear", health: 8, damage: 5, weakness: "Axe" },
@@ -28,7 +28,7 @@ const enemies = [ // Use Array since the order of how they will be fough will ma
 function closerToCentipede() {
     const next = prompt("Do you want to continue playing? ");
     if ( next === "No" || next === "no") {
-        console.log("Okay, take care and your always welcome to come back to play");
+        console.log("Okay, take care and you're always welcome to come back to play");
         process.exit();
     }else {
         console.log(" ");
