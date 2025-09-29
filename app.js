@@ -9,8 +9,8 @@ const weaponsDamage = {
     Axe: 5
 }
 
-let playerHealth = 10;
-let playerLevel = 0;
+let playerHealth = 10; //player will get 2.5 health per level up
+let playerLevel = 1; //every enemy kill gives them a level, max level is 5
 
 const enemies = {
     bats: {
@@ -34,7 +34,7 @@ const enemies = {
     arthropleuraIsBoss: {
         name: "arthropleura",
         arthropleuraHealth: 12,
-        weakness: "Axe"
+        arthropleuraDamage: 8
     }
 }
 
@@ -124,7 +124,7 @@ function fight(enemy) {
 
     // Simulate a 50% chance to hit. Math.random() returns a number between 0 and 0.99.
     // If it's less than 0.5, it's a "hit". Otherwise, it's a "miss".
-    if (Math.random() < 0.5) {
+    if (Math.random() < 0.5) { // change damage chance to 85% hit chance
       // The original code `enemyHealth -= selectedWeapon` would not work correctly.
       enemyHealth -= selectedWeapon.damage;
 
