@@ -9,38 +9,21 @@ const weaponsDamage = {
 // weaponsDamage.Axe = 7
 // weaponsDamage.Bow = 3
 
-let playerHealth = 10; //player will get 2.5 health per level up
+let playerHealth = 10;
+let playerMaxHealth = 10//player will get 2.5 health per level up
 let playerLevel = 1; //every enemy kill gives them a level, max level is 5
 let playerLocation = 'town';
 let justRespawned = false;
 let hasTrained = false;
+let currentEnemyIndex = 0;
 
 
-const enemies = {
-    bats: {
-        name: "bats",
-        batHealth: 2,
-        batDamage: 2,
-        weakness: "Bow"
-    },
-    snake: {
-        name: "snakes",
-        snakeHealth: 5,
-        snakeDamage: 4,
-        weakness: "Sword"
-    },
-    bear: {
-        name: "bear",
-        bearHealth: 8,
-        bearDamage: 5,
-         weakness: "Axe"
-    } ,
-    arthropleuraIsBoss: {
-        name: "arthropleura",
-        arthropleuraHealth: 12,
-        arthropleuraDamage: 8
-    }
-}
+const enemies = [ // Use Array since the order of how they will be fough will matter
+  { name: "Bat", health: 2, damage: 2, weakness: "Bow" },
+  { name: "Snake", health: 5, damage: 4, weakness: "Sword" },
+  { name: "Bear", health: 8, damage: 5, weakness: "Axe" },
+  { name: "Arthropleura", health: 12, damage: 8, weakness: "Axe" } // The boss
+];
 
 function closerToCentipede() {
     const next = prompt("Do you want to continue playing? ");
@@ -63,9 +46,10 @@ function getToCave () {
 
 function returnToTown() {
   console.log("You have been defeated... You awaken in the town square.");
-  playerHealth = 10;
+  playerHealth = playerMaxHealth;
   playerLocation = 'town';
-  justRespawned = true; // Set the flag to true because the player just died.
+  justRespawned = true;
+  currentEnemyIndex = 0; //Resets cave progress on death.
 }
 
 function selectWeapon() {
@@ -81,8 +65,6 @@ function selectWeapon() {
     const choice = prompt(promptText);
 
     // Check if the player's typed 'choice' exists as a key in the weaponsDamage object.
-    // For example, if choice is "Sword", `("Sword" in weaponsDamage)` is true.
-    // If choice is "Gun", `("Gun" in weaponsDamage)` is false.
     if (choice in weaponsDamage) {
       // If the weapon is valid, tell the player what they picked.
       console.log(`You have selected the ${choice}!`);
@@ -116,7 +98,11 @@ function fight(enemy) {
     if (enemyHealth <= 0) {
       console.log(`Congratulations! You defeated the ${enemy.name}!`);
       playerLevel++;
-      console.log(`You grew to level ${playerLevel}!\n`);
+      console.log(`You grew to level ${playerLevel}!`);
+
+      playerMaxHealth += 2.5;
+      playerHealth = playerMaxHealth;
+      console.log(`Your maximum health has increased to ${playerMaxHealth}!`);
       return true;
     }
 
@@ -128,7 +114,7 @@ function fight(enemy) {
       console.log(`MISS! The ${enemy.name}'s attack failed.`);
     }
     if (playerHealth <= 0) {
-      returnToTown(); // Call the function to handle defeat and set the flag.
+      returnToTown();
       return false;
     }
   }
@@ -161,65 +147,61 @@ while (true) {
       getToCave();
       justRespawned = false;
     } else {
-      console.log("You are in the town square. Your health is full.");
-      playerHealth = 10;
+      console.log(`You are in the town square. Your health is ${playerHealth}/${playerMaxHealth}.`);
+      playerHealth = playerMaxHealth;
       if (hasTrained === false) {
-        // If they haven't trained, show the training option.
         const choice = prompt("Where to next? [cave, training, quit] ");
-        if (choice === 'cave') {
-          playerLocation = 'cave';
-        } else if (choice === 'training') {
-          playerLocation = 'training';
-        } else if (choice === 'quit') {
-          closerToCentipede();
-        }
+        if (choice === 'cave') playerLocation = 'cave';
+        else if (choice === 'training') playerLocation = 'training';
+        else if (choice === 'quit') closerToCentipede();
       } else {
-        // If they HAVE trained, the option is no longer available.
         console.log("The training grounds have nothing more to teach you.");
         const choice = prompt("Where to next? [cave, quit] ");
-        if (choice === 'cave') {
-          playerLocation = 'cave';
-        } else if (choice === 'quit') {
-          closerToCentipede();
-        }
+        if (choice === 'cave') playerLocation = 'cave';
+        else if (choice === 'quit') closerToCentipede();
       }
     }
-  } else if (playerLocation === 'training') {
+  }
+
+  else if (playerLocation === 'training') {
     console.log("You are at the training grounds.");
     weaponsDamage.Sword = 5;
     weaponsDamage.Axe = 7;
     weaponsDamage.Bow = 3;
-    hasTrained = true; //
+    hasTrained = true;
     console.log("Your weapon damage has increased!");
     const choice = prompt("Finished training. Where to now? [town, cave] ");
-    if (choice === 'town') {
-      playerLocation = 'town';
-    } else if (choice === 'cave') {
-      playerLocation = 'cave';
-    }
-   else if (playerLocation === 'cave') {
-    console.log("You are at the entrance of the ominous cave. It is dark and foreboding.");
+    if (choice === 'town') playerLocation = 'town';
+    else if (choice === 'cave') playerLocation = 'cave';
+  }
+  else if (playerLocation === 'cave') {
+    console.log("You have entered the ominous cave. You must fight your way through.");
 
-    // Give the player options now that they are in the cave
-    const choice = prompt("What will you do? [go deeper, leave] ");
-
-    if (choice === 'go deeper') {
-        console.log("You head deeper into the darkness... something approaches!");
-
-        // The fight now happens here, after the player chooses to proceed.
-        const playerWon = fight(enemies.snake);
-
-        if (playerWon) {
-            console.log("Victorious, you head back to town to recover.");
+    while (playerLocation === 'cave') {
+        // First, check if the player has won the game.
+        if (currentEnemyIndex >= enemies.length) {
+            console.log("You defeated the final guardian, the Arthropleura!");
+            console.log("You found the ancient relic! You Return to town and display it in the square! You have beaten the game!");
             playerLocation = 'town';
-        } else {
-            // If the player lost, the fight() function already sent them to town.
-            // This just ensures the loop continues from the correct location.
-            playerLocation = 'town';
+            break; // Exit the cave loop.
         }
-    } else if (choice === 'leave') {
-        console.log("You decide not to risk it and return to the safety of the town.");
-        playerLocation = 'town';
+
+        const nextEnemy = enemies[currentEnemyIndex];
+        console.log(`Your health is ${playerHealth}/${playerMaxHealth}. In the next chamber, you see a ${nextEnemy.name}.`);
+        const choice = prompt("What will you do? [fight, leave] ");
+        if (choice === 'fight') {
+            const playerWon = fight(nextEnemy);
+            if (playerWon) {
+                currentEnemyIndex++;
+                console.log("You press onward, deeper into the cave...");
+            }
+            // If the player loses, the 'fight' function handles everything
+            // and the 'playerLocation === "cave"' condition will become false, ending the loop.
+        } else if (choice === 'leave') {
+            console.log("You retreat from the cave to fight another day.");
+            playerLocation = 'town';
+            currentEnemyIndex = 0; // Reset progress
+        }
     }
   }
 }
