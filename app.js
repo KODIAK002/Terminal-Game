@@ -102,13 +102,10 @@ function fight(enemy) {
         playerMaxHealth += 2.5;
         playerHealth += 2.5;
         console.log(`You grew to level ${playerLevel}!`);
+        console.log(`Your maximum health has increased to ${playerMaxHealth}!`);
       }else {
         console.log("You are already at the maximum level!");
       }
-
-      playerMaxHealth += 2.5;
-      playerHealth += 2.5;
-      console.log(`Your maximum health has increased to ${playerMaxHealth}!`);
       return true;
     }
 
